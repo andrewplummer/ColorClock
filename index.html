@@ -29,46 +29,39 @@
 
   #time {
     font-size: 11vmax;
-    width: 3.6em;
+    width: 3.7em;
   }
 
   #color {
     font-size: 4vmax;
-    width: 3.35em;
+    width: 3.95em;
   }
 
   #scale {
     position: absolute;
     left: 1vw;
     bottom: 1vh;
-    font-size: 3vmax;
+    font-size: 28px;
+    line-height: 1em;
     cursor: pointer;
   }
 
   #scale-box {
-    font-size: 6.5vmax;
-    line-height: 5vmax;
-    vertical-align: -0.15em;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-color: inherit;
+    border: 2px solid #fff;
   }
 
   @media (max-width: 500px) and (max-height: 500px) {
 
-    #scale {
-      font-size: 5vmax;
-    }
-
-    #scale-box {
-      font-size: 11vmax;
-    }
-
     #time {
       font-size: 15vmax;
-      width: 3.7em;
     }
 
     #color {
       font-size: 6vmax;
-      width: 3.95em;
     }
 
 
@@ -77,11 +70,16 @@
 </style>
 <div id="time"></div>
 <div id="color"></div>
-<div id="scale"></div>
+<div id="scale">
+  <span id="scale-box"></span>
+  <span id="scale-text">Scale</span>
+</div>
 <script>
-  var timeEl  = document.getElementById('time');
-  var colorEl = document.getElementById('color');
-  var scaleEl = document.getElementById('scale');
+  var body       = document.body;
+  var timeEl     = document.getElementById('time');
+  var colorEl    = document.getElementById('color');
+  var scaleEl    = document.getElementById('scale');
+  var scaleBoxEl = document.getElementById('scale-box');
   var hours, minutes, seconds;
   function hex(n) {
     return pad((n | 0).toString(16));
@@ -131,16 +129,16 @@
     var fontColor  = timeToColor(-50);
     timeEl.textContent = getTime();
     colorEl.textContent = bgColor;
-    document.body.style.color = fontColor;
-    document.body.style.backgroundColor = bgColor;
+    scaleBoxEl.style.borderColor = fontColor;
+    scaleBoxEl.style.backgroundColor = scaleMode ? fontColor : 'transparent';
+    body.style.color = fontColor;
+    body.style.backgroundColor = bgColor;
   }
   function toggleScaleMode(evt) {
     if (evt) {
       evt.preventDefault();
     }
     scaleMode = !scaleMode;
-    var html = '<span id="scale-box">' + (scaleMode ? '■' : '□') + '</span> Scale';
-    scaleEl.innerHTML = html;
   }
   scaleMode = false;
   simulate = false;
