@@ -28,26 +28,50 @@
   }
 
   #time {
-    font-size: 7.5vmax;
-    width: 3.4em;
+    font-size: 11vmax;
+    width: 3.6em;
   }
 
   #color {
-    font-size: 3vmax;
-    width: 4.1em;
+    font-size: 4vmax;
+    width: 3.35em;
   }
 
   #scale {
     position: absolute;
     left: 1vw;
-    bottom: 1vw;
-    font-size: 2vmax;
+    bottom: 1vh;
+    font-size: 3vmax;
     cursor: pointer;
   }
 
   #scale-box {
-    font-size: 3vmax;
-    vertical-align: -.2vmax;
+    font-size: 6.5vmax;
+    line-height: 5vmax;
+    vertical-align: -0.15em;
+  }
+
+  @media (max-width: 500px) and (max-height: 500px) {
+
+    #scale {
+      font-size: 5vmax;
+    }
+
+    #scale-box {
+      font-size: 11vmax;
+    }
+
+    #time {
+      font-size: 15vmax;
+      width: 3.7em;
+    }
+
+    #color {
+      font-size: 6vmax;
+      width: 3.95em;
+    }
+
+
   }
 
 </style>
@@ -99,7 +123,7 @@
     seconds = d.getSeconds() + (scaleMode ? d.getMilliseconds() / 1000 : 0);
   }
   function getTime() {
-    return pad(hours) + ':' + pad(minutes) + ':' + pad(Math.round(seconds));
+    return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds | 0);
   }
   function setTime() {
     updateTime();
@@ -110,7 +134,10 @@
     document.body.style.color = fontColor;
     document.body.style.backgroundColor = bgColor;
   }
-  function toggleScaleMode() {
+  function toggleScaleMode(evt) {
+    if (evt) {
+      evt.preventDefault();
+    }
     scaleMode = !scaleMode;
     var html = '<span id="scale-box">' + (scaleMode ? '■' : '□') + '</span> Scale';
     scaleEl.innerHTML = html;
