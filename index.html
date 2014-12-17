@@ -1,0 +1,114 @@
+<link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,200,100,300,700' rel='stylesheet' type='text/css'>
+<style type="text/css">
+
+  body {
+    transition: background-color linear 200ms;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Roboto Slab';
+    font-weight: 300;
+  }
+
+  div {
+    transition: color linear 200ms;
+  }
+
+  #time {
+    font-size: 7.5vmax;
+    width: 3.4em;
+  }
+
+  #color {
+    font-size: 3vmax;
+    width: 4.1em;
+  }
+
+  #scale {
+    position: absolute;
+    left: 1vw;
+    bottom: 1vw;
+    font-size: 2vmax;
+    cursor: pointer;
+  }
+
+  #scale-box {
+    font-size: 3vmax;
+    vertical-align: -.2vmax;
+  }
+
+</style>
+<div id="time"></div>
+<div id="color"></div>
+<div id="scale"></div>
+<script>
+  var timeEl  = document.getElementById('time');
+  var colorEl = document.getElementById('color');
+  var scaleEl = document.getElementById('scale');
+  var hours, minutes, seconds;
+  function hex(n) {
+    return pad((n | 0).toString(16));
+  }
+  function pad(n) {
+    return ('0' + n).slice(-2);
+  }
+  function toRGB(n, max, offset) {
+    if (scaleMode) {
+      n = (n / max) * 255;
+    } else {
+      n = parseInt(n, 16);
+    }
+    return Math.min(255, Math.max(0, (n + offset) | 0));
+  }
+  function timeToColor(offset) {
+    var r = toRGB(hours, 23, offset);
+    var g = toRGB(minutes, 59, offset);
+    var b = toRGB(seconds, 59.999, offset);
+    if (offset && (r + g + b) < 128) {
+      r = toRGB(hours, 23, -offset);
+      g = toRGB(minutes, 59, -offset);
+      b = toRGB(seconds, 59.999, -offset);
+    } else if (offset) {
+    }
+    return '#' + hex(r) + hex(g) + hex(b);
+  }
+  function updateTime() {
+    if (simulate) {
+      var t = (hours * 60 * 60) + (minutes * 60) + seconds + 1;
+      hours = (t / 60 / 60) | 0;
+      minutes = ((t / 60) % 60) | 0;
+      seconds = t % 60;
+      return;
+    }
+    var d = new Date();
+    hours = d.getHours();
+    minutes = d.getMinutes();
+    seconds = d.getSeconds() + (scaleMode ? d.getMilliseconds() / 1000 : 0);
+  }
+  function getTime() {
+    return pad(hours) + ':' + pad(minutes) + ':' + pad(Math.round(seconds));
+  }
+  function setTime() {
+    updateTime();
+    var bgColor    = timeToColor(0);
+    var fontColor  = timeToColor(-50);
+    timeEl.textContent = getTime();
+    colorEl.textContent = bgColor;
+    document.body.style.color = fontColor;
+    document.body.style.backgroundColor = bgColor;
+  }
+  function toggleScaleMode() {
+    scaleMode = !scaleMode;
+    var html = '<span id="scale-box">' + (scaleMode ? '■' : '□') + '</span> Scale';
+    scaleEl.innerHTML = html;
+  }
+  scaleMode = false;
+  simulate = false;
+  setInterval(setTime, 150);
+
+  toggleScaleMode();
+  scaleEl.addEventListener('click', toggleScaleMode);
+  scaleEl.addEventListener('touchstart', toggleScaleMode);
+
+</script>
